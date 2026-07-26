@@ -8,10 +8,11 @@ import MainLayout from "../layout/MainLayout";
 import Home from "../pages/Home";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import UsersPage from "../pages/About";
 import ProductPage from "../pages/ProductPage";
 import About from "../pages/About";
 import Cart from "../pages/Cart";
+import AddProduct from "../pages/AddProduct";
+import EditProduct from "../pages/EditProduct";
 
 const AppRoutes = () => {
   let router = createBrowserRouter([
@@ -58,6 +59,14 @@ const AppRoutes = () => {
             {
               path: "cart",
               element: <Cart />,
+            },
+            {
+              path: "products/add",
+              element: <AddProduct/>,
+            },
+            {
+              path: "products/edit/:id",
+              element: <EditProduct />,
             },
           ],
         },

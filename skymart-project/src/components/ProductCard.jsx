@@ -1,15 +1,18 @@
 import React from "react";
-import { Star, ShoppingCart, Check } from "lucide-react";
+import { Star, ShoppingCart, Check, Pencil, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../features/cart/cartSlice";
+import { useNavigate } from "react-router";
+import { deleteProduct } from "../features/product/productSlice";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const isInCart = useSelector((state) =>
     state.cart.cartItems.some((item) => item.id === product.id),
   );
-
-  const dispatch = useDispatch();
 
   const handleAddToCart = () => {
     dispatch(
@@ -19,6 +22,18 @@ const ProductCard = ({ product }) => {
       }),
     );
     toast.success("Product Added To Cart");
+  };
+
+  const handleDelete = () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?",
+    );
+
+    if (!confirmDelete) return;
+
+    dispatch(deleteProduct(product.id));
+
+    toast.success("Product Deleted Successfully");
   };
 
   return (
@@ -59,27 +74,57 @@ const ProductCard = ({ product }) => {
 
         <hr className="my-5 border-gray-200" />
 
-        {/* Price & Button */}
-        <div className="flex items-center justify-between">
-          <span className="text-3xl font-bold text-green-600">
-            ${product.price}
-          </span>
+       
+        {/* Price */}
+<div className="flex items-center justify-between mb-5">
+  <span className="text-3xl font-bold text-green-600">
+    ${product.price}
+  </span>
 
-          {isInCart ? (
-            <button className="flex items-center gap-2 bg-green-500 hover:bg-green-700 text-white px-5 py-2.5 rounded-full font-semibold transition">
-              <Check size={18} />
-              Added
-            </button>
-          ) : (
-            <button
-              onClick={handleAddToCart}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-semibold transition"
-            >
-              <ShoppingCart size={18} />
-              Add
-            </button>
-          )}
-        </div>
+  <div className="text-right">
+    <p className="text-sm text-gray-400">In Stock</p>
+    <p className="font-semibold text-lime-600">
+      {product.stock ?? 20} pcs
+    </p>
+  </div>
+</div>
+
+{/* Add To Cart */}
+{isInCart ? (
+  <button className="w-full flex justify-center items-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-semibold transition">
+    <Check size={20} />
+    Added To Cart
+  </button>
+) : (
+  <button
+    onClick={handleAddToCart}
+    className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition"
+  >
+    <ShoppingCart size={20} />
+    Add To Cart
+  </button>
+)}
+
+{/* Edit & Delete */}
+<div className="grid grid-cols-2 gap-3 mt-4">
+  <button
+    onClick={() => navigate(`/main/products/edit/${product.id}`)}
+    className="flex justify-center items-center gap-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold transition"
+  >
+    <Pencil size={18} />
+    Edit
+  </button>
+
+  <button
+    onClick={handleDelete}
+    className="flex justify-center items-center gap-2 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition"
+  >
+    <Trash2 size={18} />
+    Delete
+  </button>
+</div>
+
+        
       </div>
     </div>
   );
