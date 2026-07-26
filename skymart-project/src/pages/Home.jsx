@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { axiosInstance } from "../config/axiosinstance";
-import { AuthContext } from "../context/AuthContext";
 import {
   RiArrowRightLine,
   RiPriceTag3Line,
@@ -9,23 +8,31 @@ import {
   RiStarLine,
 } from "react-icons/ri";
 import { FiBox, FiTrendingUp } from "react-icons/fi";
-import { Product } from "../context/ProductContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading, setProducts } from "../features/product/productSlice";
 
 const Home = () => {
   const navigate = useNavigate();
 
-  const { loggedInUsers } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const { loggedInUsers } = useSelector((state) => state.auth);
 
-  let { products, setProducts, isLoading, setIsLoading, cartItems, total } = useContext(Product);
+  const { products, isLoading } = useSelector((state) => state.product);
+  const { cartItems } = useSelector((state) => state.cart);
+
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
 
   const getProducts = async () => {
     try {
       const res = await axiosInstance.get("/products");
-      setProducts(res.data);
+      dispatch(setProducts(res.data));
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false);
+      dispatch(setLoading(false));
     }
   };
 

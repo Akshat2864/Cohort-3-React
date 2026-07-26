@@ -1,13 +1,13 @@
-import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { AuthContext } from "../context/AuthContext";
+
 import { toast } from "react-toastify";
+import { loginUser, registerUser } from "../features/auth/authSlice";
 
 export const useAuth = () => {
-
-    const {registeredUsers, loggedInUsers, setLoggedInUsers, setRegisteredUsers} = useContext(AuthContext)
-
+  const dispatch = useDispatch();
+  const { registeredUsers } = useSelector((state) => state.auth);
 
   let navigate = useNavigate();
 
@@ -30,8 +30,7 @@ export const useAuth = () => {
       return;
     }
 
-    setLoggedInUsers(user);
-    localStorage.setItem("loggedInUsers", JSON.stringify(user));
+    dispatch(loginUser(user));
     toast.success("Logged In Successfully");
 
     navigate("/main");
@@ -41,13 +40,18 @@ export const useAuth = () => {
 
   //register
   let registerFormSubmit = (data) => {
-    let arr = [...registeredUsers, data];
-    setRegisteredUsers(arr);
-    toast.success("User Registered Successfully");
-    setLoggedInUsers(data);
-    localStorage.setItem("loggedInUsers", JSON.stringify(data));
+    const existingUser = registeredUsers.find(
+  (user) => user.email === data.email
+);
 
-    localStorage.setItem("registeredUsers", JSON.stringify(arr));
+if (existingUser) {
+  toast.error("Email already registered");
+  return;
+}
+    dispatch(registerUser(data));
+    dispatch(loginUser(data));
+
+    toast.success("User Registered Successfully");
     navigate("/main");
 
     reset();
