@@ -1,14 +1,18 @@
-import React, { useContext, useState } from "react";
-import { useEffect } from "react";
+import React from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { Search } from "lucide-react";
-import axios from "axios";
 import { axiosInstance } from "../config/axiosinstance";
-import { Product } from "../context/ProductContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading, setProducts } from "../features/product/productSlice";
 
 const ProductPage = () => {
   
-  let { products, setProducts, cartItems, isLoading, setIsLoading }= useContext(Product)
+  
+
+  const dispatch= useDispatch();
+  const {products, isLoading} = useSelector((state)=>state.product);
+  const {cartItems}= useSelector((state)=>state.cart)
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -17,8 +21,8 @@ const ProductPage = () => {
     try {
       let res = await axiosInstance.get("/products");
      
-      setProducts(res.data);
-      setIsLoading(false);
+      dispatch(setProducts(res.data));
+      dispatch(setLoading(false));
     } catch (error) {
       console.log("error in api call", error);
     }
@@ -82,9 +86,9 @@ const ProductPage = () => {
       <div className=" grid grid-cols-4 gap-4 ">
         {filteredProducts.map((val) => {
           
-          let isInCart = cartItems.find((elem)=> elem.id === val.id)
+         
 
-          return <ProductCard key={val.id} isInCart={isInCart} product={val} />
+          return <ProductCard key={val.id} product={val} />
 })}
       </div>
     </div>

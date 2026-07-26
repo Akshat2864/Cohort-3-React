@@ -1,19 +1,23 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Star, ShoppingCart, Check } from "lucide-react";
-import { Product } from "../context/ProductContext";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../features/cart/cartSlice";
 
-const ProductCard = ({ product, isInCart }) => {
-  let { setCartItems } = useContext(Product);
+const ProductCard = ({ product }) => {
+  const isInCart = useSelector((state) =>
+    state.cart.cartItems.some((item) => item.id === product.id),
+  );
 
-  const addToCart = () => {
-    setCartItems((prev) => [
-      ...prev,
-      {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(
+      addToCart({
         ...product,
         quantity: 1,
-      },
-    ]);
+      }),
+    );
     toast.success("Product Added To Cart");
   };
 
@@ -68,7 +72,7 @@ const ProductCard = ({ product, isInCart }) => {
             </button>
           ) : (
             <button
-              onClick={addToCart}
+              onClick={handleAddToCart}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-semibold transition"
             >
               <ShoppingCart size={18} />
