@@ -1,13 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Minus, Plus, Star, Trash2 } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { decrementQuantity, incrementQuantity, removeFromCart } from "../features/cart/cartSlice";
+import { Product } from "../context/ProductContext";
 
 const CartCard = ({ product }) => {
 
-
-  const dispatch = useDispatch();
-
+  let {incrementQuantity, decrementQuantity, removeFromCart } = useContext(Product);
   return (
     <div className="bg-gray-50 border border-gray-800 rounded-3xl p-5 hover:border-lime-400 transition-all duration-300">
       <div className="flex flex-col md:flex-row items-center gap-6">
@@ -56,7 +53,7 @@ const CartCard = ({ product }) => {
             {/* Quantity */}
 
             <div className="flex items-center gap-3">
-              <button onClick={()=>dispatch(decrementQuantity(product.id))} className="w-10 h-10 text-white rounded-xl bg-gray-800 hover:bg-lime-400 hover:text-black transition flex justify-center items-center">
+              <button onClick={()=>decrementQuantity(product.id)} className="w-10 h-10 text-white rounded-xl bg-gray-800 hover:bg-lime-400 hover:text-black transition flex justify-center items-center">
                 <Minus size={18} />
               </button>
 
@@ -64,14 +61,14 @@ const CartCard = ({ product }) => {
                 {product.quantity}
               </span>
 
-              <button onClick={()=>dispatch(incrementQuantity(product.id))} className="w-10 h-10 rounded-xl bg-lime-600 text-black hover:scale-105 transition flex justify-center items-center">
+              <button onClick={()=>incrementQuantity(product.id)} className="w-10 h-10 rounded-xl bg-lime-600 text-black hover:scale-105 transition flex justify-center items-center">
                 <Plus size={18} />
               </button>
             </div>
 
             {/* Remove */}
 
-            <button onClick={()=>dispatch(removeFromCart(product.id))} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/15 border border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition">
+            <button onClick={()=>removeFromCart(product.id)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/15 border border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition">
               <Trash2 size={18} />
               Remove
             </button>

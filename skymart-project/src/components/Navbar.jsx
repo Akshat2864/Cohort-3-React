@@ -1,22 +1,21 @@
 import React from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { ShoppingCart, LogOut, Zap } from "lucide-react";
 
 import { NavLink } from "react-router";
+import { AuthContext } from "../context/AuthContext";
+import { Product } from "../context/ProductContext";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../features/auth/authSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
-
-  const loggedInUsers = useSelector((state) => state.auth.loggedInUsers);
-  const cartItems = useSelector((state) => state.cart.cartItems);
-
-  const dispatch = useDispatch();
+  const { loggedInUsers, setLoggedInUsers } = useContext(AuthContext);
+  const {cartItems}= useContext(Product);
 
   const handleLogout = () => {
-    dispatch(logoutUser());
+    setLoggedInUsers(null);
+    localStorage.removeItem("loggedInUsers");
     navigate("/");
     toast.warn("Logged Out Successfully");
   };
